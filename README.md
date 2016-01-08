@@ -14,10 +14,15 @@ Run `composer install` or `composer update`.
 ## Methods
 
 `anythingAfter` - Removes everything from the URL after a character/word
+
 `regex` - Removes parts of the URL based on the Regex
-`parameters` - Removes parameters with specific keys 
+
+`parameters` - Removes parameters with specific keys
+ 
 `allParameters` - Removes all parameters
-`parameterValues` - Removes all parameters with keys that have a specific value 
+
+`parameterValues` - Removes all parameters with keys that have a specific value
+ 
 `prune` - Actually performs the pruning
 
 
