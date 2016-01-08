@@ -11,91 +11,51 @@ composer require tzfrs\urlpruner
 
 Run `composer install` or `composer update`.
 
-## Getting Started
-
-### Basic parsing
-Parses the data from the sitemap.xml of your server. Supports .xml and text format
-
-```php
-<?php
-require __DIR__ . '/vendor/autoload.php';
-
-use \tzfrs\GoogleSitemapParser;
-use \tzfrs\Exceptions\GoogleSitemapParserException;
-
-try {
-    $posts = (new GoogleSitemapParser('http://tzfrs.de/sitemap.xml'))->parse();
-    foreach ($posts as $post) {
-        print $post . '<br>';
-    }
-} catch (GoogleSitemapParserException $e) {
-    print $e->getMessage();
-}
-```
-
-### Parsing from robots.txt
-Searches for Sitemap entries in the robots.txt and parses those files. Also downloads/extracts gzip compressed sitemaps and searches for them
-
-```php
-<?php
-require __DIR__ . '/vendor/autoload.php';
-
-use \tzfrs\GoogleSitemapParser;
-use \tzfrs\Exceptions\GoogleSitemapParserException;
-
-try {
-    $posts = (new GoogleSitemapParser('http://www.sainsburys.co.uk/robots.txt'))->parseFromRobots();
-    foreach ($posts as $post) {
-        print $post . '<br>';
-    }
-} catch (GoogleSitemapParserException $e) {
-    print $e->getMessage();
-}
-```
-
-### Including the priority for the sitemap entry in the response
-If you also want to get the priority of a sitemap set the 2nd parameter of the constructor to true
-If the priority can't be found or is not set in the file an empty string will be returned.
-
-```php
-<?php
-require __DIR__ . '/vendor/autoload.php';
-
-use \tzfrs\GoogleSitemapParser;
-use \tzfrs\Exceptions\GoogleSitemapParserException;
-try {
-    $posts = (new GoogleSitemapParser('http://www.sainsburys.co.uk/robots.txt', true))->parseFromRobots();
-    foreach ($posts as $post=>$priority) {
-        print 'URL: '. $post . '<br>Priority: '. $priority . '<hr>';
-    }
-} catch (GoogleSitemapParserException $e) {
-    print $e->getMessage();
-}
-```
-
-### Parsing compressed sitemaps
-If you have an URL to a compressed sitemap such as example.com/sitemap.xml.gz then you need to use this method
-
-```php
-<?php
-require __DIR__ . '/vendor/autoload.php';
-
-use \tzfrs\GoogleSitemapParser;
-use \tzfrs\Exceptions\GoogleSitemapParserException;
-try {
-    $posts = (new GoogleSitemapParser('http://www.sainsburys.co.uk/wcsstore/robots/sitemap_10151_4.xml.gz'))->parseCompressed();
-    foreach ($posts as $post=>$priority) {
-        print 'URL: '. $post . '<br>Priority: '. $priority . '<hr>';
-    }
-} catch (GoogleSitemapParserException $e) {
-    print $e->getMessage();
-}
-```
-
 ## Methods
 
-`parse`
-`parseFromRobots`
+`anythingAfter` - Removes everything from the URL after a character/word
+`regex` - Removes parts of the URL based on the Regex
+`parameters` - Removes parameters with specific keys 
+`allParameters` - Removes all parameters
+`parameterValues` - Removes all parameters with keys that have a specific value 
+`prune` - Actually performs the pruning
+
+
+## Getting Started
+
+### Basic pruning
+
+```php
+<?php
+require __DIR__ . '/vendor/autoload.php';
+
+$url = 'https://www.google.de/search?num=30&site=&source=hp&q=software+development&oq=Software+Development&gs_l=hp.3.0.0l10.464.4794.0.5387.31.18.3.7.8.0.185.1953.1j14.15.0....0...1c.1.64.hp..8.23.1779.0._BnKQF4413M';
+
+$urlPruner = new \tzfrs\URLPruner\URLPruner();
+
+print $urlPruner->anythingAfter('search')
+    ->prune($url); // https://www.google.de/search
+
+print '<br>';
+
+print $urlPruner->regex('search')
+    ->prune($url); // https://www.google.de/?num=30&site=&source=hp&q=software+development&oq=Software+Development&gs_l=hp.3.0.0l10.464.4794.0.5387.31.18.3.7.8.0.185.1953.1j14.15.0....0...1c.1.64.hp..8.23.1779.0._BnKQF4413M
+
+print '<br>';
+
+print $urlPruner->parameters(['num', 'q'])
+    ->prune($url); // https://www.google.de/search?site=&source=hp&oq=Software+Development&gs_l=hp.3.0.0l10.464.4794.0.5387.31.18.3.7.8.0.185.1953.1j14.15.0....0...1c.1.64.hp..8.23.1779.0._BnKQF4413M
+
+print '<br>';
+
+print $urlPruner->allParameters()
+    ->prune($url); // https://www.google.de/search
+
+print '<br>';
+
+print $urlPruner->parameterValues(['30', '', 'hp'])
+    ->prune($url); // https://www.google.de/search?q=software+development&oq=Software+Development&gs_l=hp.3.0.0l10.464.4794.0.5387.31.18.3.7.8.0.185.1953.1j14.15.0....0...1c.1.64.hp..8.23.1779.0._BnKQF4413M
+```
 
 Contributing is surely allowed! :-)
 
