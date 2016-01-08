@@ -6,7 +6,7 @@ An easy-to-use library to prune URLs
 Install via [composer](https://getcomposer.org):
 
 ```bash
-composer require tzfrs\
+composer require tzfrs\urlpruner
 ```
 
 Run `composer install` or `composer update`.
