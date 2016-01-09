@@ -21,7 +21,7 @@ class RegexPruner
      */
     public static function replace($url, $value)
     {
-        return preg_replace('#' . $value . '#', '', $url);
+        return preg_replace('#' . preg_quote($value, '#') . '#', '', $url);
     }
 
 }
