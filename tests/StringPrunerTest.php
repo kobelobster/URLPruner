@@ -10,4 +10,13 @@ class StringPrunerTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals('https://www.google.de/search', \tzfrs\URLPruner\Pruners\StringPruner::anythingAfter($url, $wildcard));
     }
+
+    public function testAnythingAfterNotFound()
+    {
+        $url = 'https://www.reddit.com/r/PHP/comments/4016ew';
+
+        $wildcard = 'notfound';
+
+        $this->assertEquals($url, \tzfrs\URLPruner\Pruners\StringPruner::anythingAfter($url, $wildcard));
+    }
 }
