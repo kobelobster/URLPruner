@@ -81,7 +81,17 @@ class ParamPruner
             }
         }
 
-        return $parsedURL['scheme'] . '://' . $parsedURL['host'] . $parsedURL['path'] . '?' . http_build_query($queryParameters);
+        $result = '';
+        $result .= isset($parsedURL['scheme']) ? $parsedURL['scheme'] . '://' : '';
+        $result .= isset($parsedURL['user']) ? $parsedURL['user'] : '';
+        $result .= isset($parsedURL['pass']) ? ':' . $parsedURL['pass'] . '@' : (isset($parsedURL['user']) ? '@' : '');
+        $result .= isset($parsedURL['host']) ? $parsedURL['host'] : '';
+        $result .= isset($parsedURL['port']) ? ':' . $parsedURL['port'] : '';
+        $result .= isset($parsedURL['path']) ? $parsedURL['path'] : '';
+        $result .= '?' . http_build_query($queryParameters);
+        $result .= isset($parsedURL['fragment']) ? '#' . $parsedURL['fragment'] : '';
+
+        return $result;
     }
 
 }
