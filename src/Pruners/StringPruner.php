@@ -21,7 +21,11 @@ class StringPruner
      */
     public static function anythingAfter($string, $wildcard)
     {
-        return substr($string, 0, stripos($string, $wildcard) + strlen($wildcard));
+        $pos = stripos($string, $wildcard);
+        if ($pos === false) {
+            return $string;
+        }
+        return substr($string, 0, $pos + strlen($wildcard));
     }
 
 }
