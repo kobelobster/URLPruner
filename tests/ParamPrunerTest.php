@@ -36,4 +36,25 @@ class ParamPrunerTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($url, \tzfrs\URLPruner\Pruners\ParamPruner::parse($url, []));
     }
+
+    public function testRepeatedParametersRemovingByValue()
+    {
+        $url = 'http://hostname/?a=1&a=2&a=3&b=4&b=5&b=6';
+
+        $this->assertEquals('http://hostname/?a=1&a=3&b=4&b=5&b=6', \tzfrs\URLPruner\Pruners\ParamPruner::values($url, [2]));
+    }
+
+    public function testRepeatedParametersRemovingByKey()
+    {
+        $url = 'http://hostname/?a=1&a=2&a=3&b=4&b=5&b=6&c=7&c=8';
+
+        $this->assertEquals('http://hostname/?a=1&a=2&a=3&b=4&b=5&b=6', \tzfrs\URLPruner\Pruners\ParamPruner::keys($url, ['c']));
+    }
+
+    public function testEncodedURLs()
+    {
+        $url = 'http://hostname/?x1=%21&x%40=2&x%23=%23';
+
+        $this->assertEquals('http://hostname/?x1=%21&x%23=%23', \tzfrs\URLPruner\Pruners\ParamPruner::values($url, [2]));
+    }
 }

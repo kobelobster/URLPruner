@@ -63,23 +63,21 @@ class ParamPruner
             return $url;
         }
 
-        parse_str($parsedURL['query'], $queryParameters);
-
-        if ($identifyByIndex === true) {
-            foreach ($params as $item) {
-                if (isset($queryParameters[$item])) {
-                    unset($queryParameters[$item]);
-                }
-            }
-        } else {
-            foreach ($queryParameters as $index => $queryParameter) {
+        $queryParameters = explode('&', $parsedURL['query']);
+        $newQueryParams = [];
+        foreach ($queryParameters as $pair) {
+            if (strpos($pair, '=') !== false) {
+                list($name,$value) = explode('=', $pair, 2);
+                $matchAgainst = $identifyByIndex ? $name : $value;
                 foreach ($params as $item) {
-                    if ($item === $queryParameter) {
-                        unset($queryParameters[$index]);
+                    if ($item == $matchAgainst) {
+                        continue 2;
                     }
                 }
             }
+            $newQueryParams[] = $pair;
         }
+        $newQueryString = implode('&', $newQueryParams);
 
         $result = '';
         $result .= isset($parsedURL['scheme']) ? $parsedURL['scheme'] . '://' : '';
@@ -88,7 +86,7 @@ class ParamPruner
         $result .= isset($parsedURL['host']) ? $parsedURL['host'] : '';
         $result .= isset($parsedURL['port']) ? ':' . $parsedURL['port'] : '';
         $result .= isset($parsedURL['path']) ? $parsedURL['path'] : '';
-        $result .= '?' . http_build_query($queryParameters);
+        $result .= '?' . $newQueryString;
         $result .= isset($parsedURL['fragment']) ? '#' . $parsedURL['fragment'] : '';
 
         return $result;
